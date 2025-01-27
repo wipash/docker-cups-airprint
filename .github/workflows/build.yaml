@@ -51,8 +51,8 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=${{ matrix.ubuntu_version }}
-            type=raw,value=${{ matrix.ubuntu_version }}-${{ github.sha }}
-            type=raw,value=${{ matrix.ubuntu_version }}-${{ fromJSON('["", "-dev"]')[github.ref != 'refs/heads/master'] }}${{ format('{0:date}', 'YYYYMMDD') }}
+            type=sha,prefix=${{ matrix.ubuntu_version }}-
+            type=raw,value=${{ matrix.ubuntu_version }}-${{ github.ref == 'refs/heads/master' && 'latest' || 'dev' }}
 
       - name: Build test image
         uses: docker/build-push-action@v5
