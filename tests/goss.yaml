@@ -15,12 +15,7 @@ port:
   tcp:631:
     listening: true
     ip:
-    - 127.0.0.1
-service:
-  cups:
-    enabled: true
-    running: true
-    skip: false
+    - 0.0.0.0
 http:
   http://localhost:631:
     status: 200
