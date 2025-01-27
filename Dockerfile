@@ -27,9 +27,10 @@ COPY --from=kyocera-builder /rastertokpsl-re/*.ppd /usr/share/cups/model/Kyocera
 FROM ${TARGETARCH}-base
 
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && apt-get -y upgrade
 ARG UBUNTU_VERSION
-RUN apt-get -y install \
+RUN apt-get update && \
+      apt-get -y upgrade && \
+      apt-get -y install \
       cups-daemon \
       cups-client \
       cups-pdf \
