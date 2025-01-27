@@ -1,6 +1,6 @@
 ARG UBUNTU_VERSION=noble
 
-FROM ubuntu:$UBUNTU_VERSION as kyocera-builder
+FROM ubuntu:$UBUNTU_VERSION AS kyocera-builder
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get -y upgrade
 RUN apt-get -y --no-install-recommends install \
@@ -9,15 +9,16 @@ RUN apt-get -y --no-install-recommends install \
       libc6-dev \
       gcc \
       cmake \
-      git
+      git \
+      ca-certificates
 RUN git clone https://github.com/eLtMosen/rastertokpsl-re.git
 WORKDIR /rastertokpsl-re
 RUN git checkout cbac20651fe1a40ad258397dc055254b92490054
 RUN cmake -B_build -H. && cmake --build _build/
 
-FROM ubuntu:$UBUNTU_VERSION as arm64-base
-FROM ubuntu:$UBUNTU_VERSION as arm-base
-FROM ubuntu:$UBUNTU_VERSION as amd64-base
+FROM ubuntu:$UBUNTU_VERSION AS arm64-base
+FROM ubuntu:$UBUNTU_VERSION AS arm-base
+FROM ubuntu:$UBUNTU_VERSION AS amd64-base
 COPY --from=kyocera-builder --chmod=0555 /rastertokpsl-re/bin/rastertokpsl-re /usr/lib/cups/filter/rastertokpsl
 RUN mkdir -p /usr/share/cups/model/Kyocera
 COPY --from=kyocera-builder /rastertokpsl-re/*.ppd /usr/share/cups/model/Kyocera/
@@ -39,6 +40,7 @@ RUN apt-get -y --no-install-recommends install \
       hplip \
       avahi-daemon \
       libnss-mdns \
+      ca-certificates \
       # for mkpasswd
       whois \
       curl \
