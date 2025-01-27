@@ -29,7 +29,7 @@ FROM ${TARGETARCH}-base
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get -y upgrade && rm -rf /var/lib/apt/lists/*
 ARG UBUNTU_VERSION
-RUN apt-get -y --no-install-recommends install \
+RUN apt-get -y install \
       cups-daemon \
       cups-client \
       cups-pdf \
@@ -40,7 +40,6 @@ RUN apt-get -y --no-install-recommends install \
       hplip \
       avahi-daemon \
       libnss-mdns \
-      ca-certificates \
       # for mkpasswd
       whois \
       curl \
