@@ -3,7 +3,7 @@ ARG UBUNTU_VERSION=noble
 FROM ubuntu:$UBUNTU_VERSION AS kyocera-builder
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get -y upgrade
-RUN apt-get -y --no-install-recommends install \
+RUN apt-get -y install \
       libcupsimage2-dev \
       libcups2-dev \
       libc6-dev \
