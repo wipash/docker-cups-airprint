@@ -1,0 +1,34 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
+process:
+  cupsd:
+    running: true
+file:
+  /etc/cups:
+    exists: true
+    mode: "0755"
+    filetype: directory
+  /etc/cups/cupsd.conf:
+    exists: true
+    mode: "0640"
+port:
+  tcp:631:
+    listening: true
+    ip:
+    - 127.0.0.1
+service:
+  cups:
+    enabled: true
+    running: true
+    skip: false
+http:
+  http://localhost:631:
+    status: 200
+    timeout: 5000
+command:
+  lpstat -h localhost -r:
+    exit-status: 0
+    stdout:
+    - "scheduler is running"
+  cupsctl -h localhost --share-printers:
+    exit-status: 0
