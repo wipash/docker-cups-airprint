@@ -7,6 +7,7 @@ set -e
 ### variable defaults
 CUPS_IP=${CUPS_IP:-$(hostname -i)}
 CUPS_HOSTNAME=${CUPS_HOSTNAME:-$(hostname -f)}
+CUPS_SERVERALIAS=${CUPS_SERVERALIAS:-""}
 CUPS_ADMIN_USER=${CUPS_ADMIN_USER:-"admin"}
 CUPS_ADMIN_PASSWORD=${CUPS_ADMIN_PASSWORD:-"secr3t"}
 CUPS_WEBINTERFACE=${CUPS_WEBINTERFACE:-"yes"}
@@ -21,7 +22,7 @@ AVAHI_FRIENDLY_DESC=${AVAHI_FRIENDLY_DESC=:-"no"}
 AVAHI_IPV6=${AVAHI_IPV6:="no"}
 AVAHI_REFLECTOR=${AVAHI_REFLECTOR:="no"}
 AVAHI_REFLECT_IPV=${AVAHI_REFLECT_IPV:="no"}
-PRE_INIT_HOOK=${PRE_INIT_HOOK:="/root/pre-init-script.sh"} 
+PRE_INIT_HOOK=${PRE_INIT_HOOK:="/root/pre-init-script.sh"}
 [ "yes" = "${CUPS_ENV_DEBUG}" ] && export -n
 
 ### check for valid input
@@ -48,8 +49,8 @@ fi
 # CreateSelfSignedCerts no
 # host.name.crt & host.name.key -> /etc/cups/ssl/
 if [ -n "${CUPS_SSL_CERT}" -a -n "${CUPS_SSL_KEY}" ]; then
-  [ -z "$(grep CreateSelfSignedCerts /etc/cups/cups-files.conf)" ] && 
-    echo "CreateSelfSignedCerts no" >> /etc/cups/cups-files.conf || 
+  [ -z "$(grep CreateSelfSignedCerts /etc/cups/cups-files.conf)" ] &&
+    echo "CreateSelfSignedCerts no" >> /etc/cups/cups-files.conf ||
     sed -i 's/^.*CreateSelfSignedCerts.*/CreateSelfSignedCerts no/' /etc/cups/cups-files.conf
   echo -e "${CUPS_SSL_CERT}" > /etc/cups/ssl/${CUPS_HOSTNAME}.crt
   echo -e "${CUPS_SSL_KEY}" > /etc/cups/ssl/${CUPS_HOSTNAME}.key
@@ -105,6 +106,7 @@ echo "--> CUPS ready"
 [ "yes" = "${CUPS_SHARE_PRINTERS}" ] && cupsctl --share-printers || cupsctl --no-share-printers
 [ "yes" = "${CUPS_WEBINTERFACE}" ] && cupsctl WebInterface=yes || cupsctl WebInterface=No
 cupsctl ServerName=${CUPS_HOSTNAME}
+[ -n "${CUPS_SERVERALIAS}" ] && cupsctl ServerAlias=${CUPS_SERVERALIAS}
 cupsctl LogLevel=${CUPS_LOGLEVEL}
 cupsctl AccessLogLevel=${CUPS_ACCESS_LOGLEVEL}
 # setup printers (run each CUPS_LPADMIN_PRINTER* command)
